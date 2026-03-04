@@ -9,25 +9,33 @@
 </head>
 <body>
         <h1>WAI Form Example</h1>
-        <form method="post" action="http://mercury.swin.edu.au/it000000/formtest.php">
+        <form method="post" action="http://mercury.swin.edu.au/it000000/formtest.php">   
                 <p>Contact Information</p>
-                <p> Name:
-                        <input type="text" name="cname" id="cname" /></p>
-                <p> E-mail Address:
-                        <input type="text" name="cemail" id="cemail" /></p>
-                <p> Mailing Address:<br />
-                        <textarea name="caddr" id="caddr" rows="4" cols="40"></textarea></p>
+                <label for="cname"> Name:
+                        <input type="text" name="cname" id="cname" /></label><br />
+                <label for="cemail"> E-mail Address:
+                        <input type="text" name="cemail" id="cemail" /></label><br />
+                <label for="caddr"> Mailing Address:<br />
+                        <textarea name="caddr" id="caddr" rows="4" cols="40"></textarea></label>
                 <p>Credit Card Information</p>
-                <p>
-                        <label><input type="radio" name="card" id="cvisa" value="visa" /> Visa</label>
-                        <label><input type="radio" name="card" id="cmc" value="mc" /> MasterCard</label><br />
+                <fieldset>
+                        <legend>Card Type</legend>
+                                <p>
+                                        <label for="cvisa"><input type="radio" name="card" id="cvisa" value="visa" /> Visa</label>
+                                        <label for="cmc"><input type="radio" name="card" id="cmc" value="mc" /> MasterCard</label><br />
+                                </p>
+                </fieldset>
 
-                        <label>Number: <input type="text" name="number" id="cnumber"/></label><br />
-                        <label>Expiry: <input type="text" name="expiry" id="cexpiry"/></label>
-                </p>
                 <p>
-                        <input type="submit" value="Submit order" /> <input type="reset" value="Clear order" />
+                        <label for="cnumber">Number: <input type="text" name="number" id="cnumber"/></label><br />
+                        <label for="cexpiry">Expiry: <input type="text" name="expiry" id="cexpiry"/></label>
                 </p>
+                
+                <label for="csubmit">Finalise Order:
+                        <input type="submit" value="Submit order" id="csubmit"/> <input type="reset" value="Clear order" />
+                </label>
+                        
+                
         </form>
 </body>
 </html>

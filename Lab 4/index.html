@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .controls { margin: 15px 0; }
+        button { margin-right: 5px; cursor: pointer; }
+        .message { font-weight: bold; margin-top: 10px; color: #2c3e50; }
+        .guesses { margin-top: 20px; color: #666; }
+        input:disabled { background: #eee; }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <h1>Number Guessing Game</h1>
+
+        <div>
+            <label for="guess">Enter your guess from 1 to 100: </label>
+            <input 
+                type="number" 
+                id="guess" 
+                v-model.number="userGuess" 
+                :disabled="gameOver"
+                @keyup.enter="checkGuess"
+            >
+        </div>
+
+        <div class="controls">
+            <button @click="checkGuess" :disabled="gameOver">Check Guess</button>
+            <button @click="giveUp" :disabled="gameOver">Give Up</button>
+            <button @click="startOver">Start Over</button>
+        </div>
+
+        <p class="message">{{ message }}</p>
+        <p v-if="!gameOver">Attempts left: {{ attemptsLeft }}</p>
+
+        <div class="guesses" v-if="guessHistory.length > 0">
+            <strong>Your guesses:</strong>
+            <ul>
+                <li v-for="(guess, index) in guessHistory" :key="index">
+                    Attempt {{ index + 1 }}: {{ guess }}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                // --- Reactive State (Data) ---
+                const targetNumber = ref(0);
+                const userGuess = ref(null);
+                const message = ref("Start guessing"); // Initial message 
+                const attemptsLeft = ref(5);           // Max 5 attempts 
+                const guessHistory = ref([]);          // Array to track guesses 
+                const gameOver = ref(false);           // Controls game state 
+
+                // --- Methods ---
+
+                // Initializes or resets the game 
+                const startOver = () => {
+                    targetNumber.value = Math.floor(Math.random() * 100) + 1;
+                    userGuess.value = null;
+                    message.value = "Start guessing";
+                    attemptsLeft.value = 5;
+                    guessHistory.value = [];
+                    gameOver.value = false;
+                    console.log("Secret Number (for testing):", targetNumber.value);
+                };
+
+                // Validates and evaluates the user's guess [cite: 27, 33]
+                const checkGuess = () => {
+                    if (userGuess.value === null || userGuess.value < 1 || userGuess.value > 100) {
+                        message.value = "Please enter a valid number between 1 and 100.";
+                        return;
+                    }
+
+                    // Log history and decrease attempts
+                    guessHistory.value.push(userGuess.value);
+                    attemptsLeft.value--;
+
+                    if (userGuess.value === targetNumber.value) {
+                        message.value = "You got it!";
+                        gameOver.value = true;
+                    } else if (attemptsLeft.value === 0) {
+                        message.value = `Game over! The correct number was ${targetNumber.value}.`;
+                        gameOver.value = true;
+                    } else if (userGuess.value < targetNumber.value) {
+                        message.value = "Guess higher.";
+                    } else {
+                        message.value = "Guess lower.";
+                    }
+                    
+                    userGuess.value = null; // Clear input after guess
+                };
+
+                // Reveal the number and end the game 
+                const giveUp = () => {
+                    message.value = `The correct number was ${targetNumber.value}.`;
+                    gameOver.value = true;
+                };
+
+                // Initialize the first game on load
+                startOver();
+
+                return {
+                    targetNumber, userGuess, message, attemptsLeft, 
+                    guessHistory, gameOver, checkGuess, giveUp, startOver
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

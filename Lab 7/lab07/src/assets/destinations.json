@@ -1,0 +1,6 @@
+[
+  { "name": "Fuji", "country": "Japan", "description": "An iconic volcano.", "category": "Mountain", "image": "/src/assets/mount fuji.jpg" },
+  { "name": "Great Barrier Reef", "country": "Australia", "description": "Vibrant coral system.", "category": "Ocean", "image": "/src/assets/great barrier reef.jpg" },
+  { "name": "Bondi", "country": "Australia", "description": "Famous surfing spot.", "category": "Beach", "image": "/src/assets/bondi.jpg" },
+  { "name": "New York", "country": "USA", "description": "The city that never sleeps.", "category": "City", "image": "/src/assets/nyc.jpg" }
+]

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COS30043 Lab 03 - Vue Directives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-light">
+
+<div id="app" class="container my-5 p-4 bg-white shadow rounded">
+    
+    <h2 class="text-center mb-4">Event Information</h2>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Event ID</label>
+            <input type="text" v-model="searchId" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Event Name</label>
+            <input type="text" v-model="searchName" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Duration (Hours)</label>
+            <input type="number" v-model.number="searchDur" class="form-control">
+        </div>
+    </div>
+
+    <div class="mb-4 text-center">
+        <label class="fw-bold me-3">Category:</label>
+        <div class="form-check form-check-inline" v-for="cat in categories" :key="cat">
+            <input class="form-check-input" type="radio" :value="cat" v-model="selectedCat" :id="'filter-'+cat">
+            <label class="form-check-label" :for="'filter-'+cat">{{ cat }}</label>  
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+            <tr>
+                <th>Event ID</th>
+                <th>Event Name</th>
+                <th>Category</th>
+                <th>Duration Hour</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="event in filteredEvents" :key="event.eventid">
+                <td>{{ event.eventid }}</td>
+                <td>{{ event.eventname }}</td>
+                <td>{{ event.category }}</td>
+                <td>{{ event.durationhour }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr class="my-5">
+
+    <h2 class="text-center mb-4">Registration Form</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h3>Login Information</h3>
+            <div class="mb-3">
+                <label class="form-label">Enter user name:</label>
+                <input type="text" v-model="regUser" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Enter password:</label>
+                <input type="password" v-model="regPass" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Re-enter password:</label>
+                <input type="password" v-model="regPassConfirm" class="form-control">
+                <span v-if="regPass !== regPassConfirm" class="text-danger small">
+                    Passwords do not match
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Event Name</h3>
+            <div class="mb-3">
+                <label class="form-label d-block">Event Category</label>
+                <div class="form-check form-check-inline" v-for="cat in categories" :key="'reg-'+cat">
+                    <input class="form-check-input" type="radio" :value="cat" v-model="regSelectedCat" :id="'reg-'+cat">
+                    <label class="form-check-label" :for="'reg-'+cat">{{ cat }}</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Select event name:</label>
+                <select v-model="regSelectedEvent" class="form-select">
+                    <option disabled value="">Please select one</option>
+                    <option v-for="event in regDropdownEvents" :key="event.eventid" :value="event.eventname">
+                        {{ event.eventname }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 p-3 border rounded bg-light" v-if="regUser && regSelectedEvent">
+        <h3>Summary</h3>
+        <ul class="list-unstyled ms-3">
+            <li><strong>Username:</strong> {{ regUser }}</li>
+            <li><strong>Category:</strong> {{ regSelectedCat }}</li>
+            <li><strong>Event Name:</strong> {{ regSelectedEvent }}</li>
+        </ul>
+    </div>
+</div>
+
+<script src="events.js"></script>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                allEvents: eventData, // Referenced from events.js
+                categories: ['Business', 'Technology', 'Finance', 'Marketing', 'All'],
+                
+                // Search Table states
+                searchId: '',
+                searchName: '',
+                searchDur: null,
+                selectedCat: 'All',
+
+                // Registration states
+                regUser: '',
+                regPass: '',
+                regPassConfirm: '',
+                regSelectedCat: 'All',
+                regSelectedEvent: ''
+            }
+        },
+        computed: {
+            // Logic for filtering the information table
+            filteredEvents() {
+                return this.allEvents.filter(e => {
+                    const matchId = e.eventid.toLowerCase().includes(this.searchId.toLowerCase());
+                    const matchName = e.eventname.toLowerCase().includes(this.searchName.toLowerCase());
+                    const matchDur = !this.searchDur || e.durationhour === this.searchDur;
+                    const matchCat = this.selectedCat === 'All' || e.category === this.selectedCat;
+                    return matchId && matchName && matchDur && matchCat;
+                });
+            },
+            // Dynamic logic for the form dropdown list
+            regDropdownEvents() {
+                return this.allEvents.filter(e => {
+                    return this.regSelectedCat === 'All' || e.category === this.regSelectedCat;
+                });
+            }
+        }
+    }).mount('#app');
+</script>
+
+</body>
+</html>

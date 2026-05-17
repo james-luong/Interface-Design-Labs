@@ -12,7 +12,7 @@
           <h5 class="card-title">{{ dest.name }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ dest.country }} - {{ dest.category }}</h6>
           <p class="card-text">{{ dest.description }}</p>
-          <img src="{{dest.image}}" alt="View" class="img-fluid rounded shadow">
+          <img :src=dest.image alt="View" class="img-fluid rounded shadow">
 
         </div>
       </div>
@@ -34,7 +34,8 @@ const filteredDestinations = computed(() => {
     return dest.name.toLowerCase().includes(query) ||
            dest.country.toLowerCase().includes(query) ||
            dest.description.toLowerCase().includes(query) ||
-           dest.category.toLowerCase().includes(query);
+           dest.category.toLowerCase().includes(query) ||
+           dest.image.includes(query);
   });
 });
 </script>

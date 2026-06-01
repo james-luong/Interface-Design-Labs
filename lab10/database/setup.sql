@@ -17,8 +17,8 @@ CREATE TABLE destinations (
 
 INSERT INTO destinations (name, country, category, description, rating) VALUES
 ('Bondi Beach', 'Australia', 'Ocean', 'Popular beach in Sydney known for surfing and coastal walks.', 4.8),
-('Mount Fuji', 'Japan', 'Mountain', 'Iconic volcano and Japan\'s highest mountain.', 4.9),
-('Great Barrier Reef', 'Australia', 'Ocean', 'World\'s largest coral reef system with diverse marine life.', 4.9),
+('Mount Fuji', 'Japan', 'Mountain', 'Iconic volcano and Japan\s highest mountain.', 4.9),
+('Great Barrier Reef', 'Australia', 'Ocean', 'Worlds largest coral reef system with diverse marine life.', 4.9),
 ('Swiss Alps', 'Switzerland', 'Mountain', 'Famous mountain range known for skiing and alpine scenery.', 4.8),
 ('Paris', 'France', 'City', 'Historic city known for the Eiffel Tower and rich culture.', 4.7),
 ('Maldives', 'Maldives', 'Beach', 'Tropical island destination with clear waters and coral reefs.', 4.9),

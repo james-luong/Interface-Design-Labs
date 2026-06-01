@@ -1,14 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+
+  // Relative base so built assets work in any subdirectory on Mercury
+  base: './',
+
   server: {
     proxy: {
-      // Forward /api requests to the Express backend
+      // Forward /api/* to the local PHP dev server (php -S localhost:8000)
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8000',
         changeOrigin: true
       }
     }

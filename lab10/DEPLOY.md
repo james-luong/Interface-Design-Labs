@@ -1,137 +1,169 @@
-# Deploying Lab 10 on Mercury (Node + MySQL)
+# Lab 10 — Mercury Deployment Guide (PHP + MySQL)
 
-This app is now set up to run as **one Node process** that serves both the Vue
-frontend and the `/api` routes. You build the frontend locally, copy everything
-to Mercury, set up the database, and keep the server running with `pm2`.
+Mercury runs **Apache + PHP + MySQL**, not Node.js.  
+The deployment is: build the Vue app locally → upload `dist/` + `api/` → set up MySQL.
 
-Replace the placeholders below with your real values:
+Replace these placeholders throughout:
+- `sXXXXXXX` → your Swinburne student ID (e.g. `s1234567`)
+- `YOUR_DB_PASSWORD` → your MySQL password on Mercury
 
-- `USER`      → your Mercury login
-- `mercury.SCHOOL.edu` → the actual Mercury hostname
-- `PORT`      → the port your account is allowed to use (ask your instructor/IT)
-- DB name / user / password → your assigned MySQL credentials
+Your live URL will be:
+```
+https://mercury.swin.edu.au/cos30043/sXXXXXXX/lab10/
+```
 
 ---
 
-## 1. Build the frontend locally
+## Step 1 — Edit the database config (local)
 
-On your own machine, from the project root:
+Open `api/config.php` and fill in your credentials:
 
-```bash
-npm install          # if node_modules is missing or was disturbed
-npm run build        # produces dist/
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'sXXXXXXX');           // your student ID
+define('DB_PASS', 'YOUR_DB_PASSWORD');   // your Mercury MySQL password
+define('DB_NAME', 'sXXXXXXX');           // usually same as your student ID
 ```
 
-This creates the `dist/` folder. `server.js` serves it in production, so the
-frontend's relative `/api` calls hit the same server — no proxy needed.
-
-## 2. Copy the project to Mercury
-
-You only need the source, `dist/`, `server.js`, `package.json`,
-`package-lock.json`, and `database/`. **Do not** copy `node_modules` (the
-native binaries won't match Mercury) or your local `.env`.
-
-**Option A — SCP/rsync** (simple):
-
-```bash
-rsync -av --exclude node_modules --exclude .env \
-  ./ USER@mercury.SCHOOL.edu:~/lab10/
-```
-
-**Option B — Git** (cleaner if you have a repo): push to GitHub, then on
-Mercury `git clone <repo> ~/lab10`. `dist/` is gitignored, so either commit it
-for this deploy or run `npm run build` on Mercury too (step 3 installs the deps
-that allows that).
-
-## 3. Install dependencies on Mercury
-
-SSH in and install fresh (this pulls the correct Linux binaries):
-
-```bash
-ssh USER@mercury.SCHOOL.edu
-cd ~/lab10
-npm install --omit=dev      # only needs express, cors, dotenv, mysql2 at runtime
-```
-
-If you chose to build on Mercury instead of copying `dist/`, run a full
-`npm install` then `npm run build` here.
-
-## 4. Set up the MySQL database
-
-Log into MySQL with your Mercury credentials and load the schema:
-
-```bash
-mysql -u DBUSER -p < database/setup.sql
-```
-
-`setup.sql` creates the `lab10_travel` database, the `destinations` table, and
-seed rows. If your account can't create databases, create the table inside your
-pre-assigned database instead (remove the `CREATE DATABASE` / `USE` lines and
-run it against your DB).
-
-## 5. Configure `.env` on Mercury
-
-Create a `.env` file in `~/lab10` (never commit this):
-
-```bash
-cat > .env <<'EOF'
-DB_HOST=localhost
-DB_USER=DBUSER
-DB_PASSWORD=DBPASSWORD
-DB_NAME=lab10_travel
-DB_PORT=3306
-PORT=PORT
-EOF
-```
-
-Use the DB host/port Mercury gives you (often `localhost:3306`).
-
-## 6. Run the server persistently
-
-A bare `node server.js` dies when you log out. Use `pm2` so it survives and
-restarts on reboot:
-
-```bash
-npm install -g pm2            # once; if you can't install globally, see note below
-pm2 start server.js --name lab10
-pm2 save
-pm2 startup                   # follow the printed command to enable on boot
-```
-
-Check it: `pm2 logs lab10` should show `✅ Connected to MySQL` and
-`🚀 Server running at http://localhost:PORT`.
-
-> No global install permission? Use `npx pm2 start server.js --name lab10`, or
-> as a fallback: `nohup node server.js > app.log 2>&1 &`.
-
-## 7. Access the app
-
-- If Mercury exposes your port directly:
-  `http://mercury.SCHOOL.edu:PORT`
-- If there's a shared web server (Apache/nginx) in front, you'll likely have a
-  path like `http://mercury.SCHOOL.edu/~USER/` reverse-proxied to your port —
-  confirm the exact URL with your instructor/IT.
+> **How to find your Mercury MySQL credentials:**  
+> Log into Mercury, run `mysql -u sXXXXXXX -p` and enter your password.  
+> If you have never set a password, run: `mysqladmin -u sXXXXXXX password 'newpassword'`
 
 ---
 
-## Updating after a code change
+## Step 2 — Build the Vue frontend (local)
+
+In your terminal, from the `lab10/` project folder:
 
 ```bash
-# locally
-npm run build
-rsync -av --exclude node_modules --exclude .env ./ USER@mercury.SCHOOL.edu:~/lab10/
-# on Mercury
-pm2 restart lab10
+npm install          # only needed first time
+npm run build        # compiles Vue → dist/
 ```
+
+This produces the `dist/` folder. The build uses relative paths (`./assets/...`)
+so it works correctly inside any Mercury subdirectory.
+
+---
+
+## Step 3 — Upload files to Mercury
+
+You need to upload these folders/files:
+
+```
+dist/               ← built Vue app (index.html + assets/)
+api/                ← PHP backend (config.php, destinations.php, categories.php)
+sql/travel.sql      ← database setup script
+```
+
+### Option A — FileZilla (easiest, GUI)
+
+1. Download FileZilla from https://filezilla-project.org
+2. Connect:
+   - Host: `mercury.swin.edu.au`
+   - Username: `sXXXXXXX`
+   - Password: your Mercury password
+   - Port: `22`  (SFTP)
+3. On the remote side, navigate to:  
+   `/home/cos30043/sXXXXXXX/` (or wherever your web root is — ask your tutor)
+4. Create a folder called `lab10` if it doesn't exist
+5. Upload:
+   - Everything inside `dist/` → into `lab10/`
+   - The entire `api/` folder → into `lab10/api/`
+   - `sql/travel.sql` → into `lab10/sql/`
+
+The final structure on Mercury should look like:
+```
+lab10/
+├── index.html          ← from dist/
+├── assets/             ← from dist/assets/
+│   ├── index-XXXX.js
+│   └── index-XXXX.css
+├── api/
+│   ├── config.php
+│   ├── destinations.php
+│   └── categories.php
+└── sql/
+    └── travel.sql
+```
+
+### Option B — SCP (command line)
+
+```bash
+# Upload dist contents (note the trailing slash on dist/)
+scp -r dist/* sXXXXXXX@mercury.swin.edu.au:~/public_html/lab10/
+
+# Upload the api folder
+scp -r api/ sXXXXXXX@mercury.swin.edu.au:~/public_html/lab10/api/
+
+# Upload the SQL file
+scp sql/travel.sql sXXXXXXX@mercury.swin.edu.au:~/public_html/lab10/sql/
+```
+
+> **Note on the path:** The exact remote path depends on how Mercury maps your
+> account. Common paths are `~/public_html/lab10/` or `~/cos30043/lab10/`.
+> Confirm with your tutor or check what path maps to your Mercury URL.
+
+---
+
+## Step 4 — Set up the MySQL database (on Mercury)
+
+SSH into Mercury:
+```bash
+ssh sXXXXXXX@mercury.swin.edu.au
+```
+
+Run the SQL setup script to create and seed the `destinations` table:
+```bash
+mysql -u sXXXXXXX -p sXXXXXXX < ~/public_html/lab10/sql/travel.sql
+#                              ^                  ^
+#               your database name           path to travel.sql
+```
+
+Enter your MySQL password when prompted. You should see no errors.
+
+**Verify it worked:**
+```bash
+mysql -u sXXXXXXX -p sXXXXXXX -e "SELECT COUNT(*) FROM destinations;"
+```
+Should print `15`.
+
+---
+
+## Step 5 — Test the app
+
+Open your browser and go to:
+```
+https://mercury.swin.edu.au/cos30043/sXXXXXXX/lab10/
+```
+
+You should see the Travel Destinations app with 15 records.
+
+**Quick API test** (checks PHP is working):
+```
+https://mercury.swin.edu.au/cos30043/sXXXXXXX/lab10/api/destinations.php?page=1&limit=5
+```
+Should return JSON with a `data` array and `pagination` object.
+
+---
 
 ## Troubleshooting
 
-- **Page loads but data doesn't / 404 on `/api`** — make sure you're hitting
-  the Node server's port, not a static-only path. The API and app must be the
-  same origin.
-- **`❌ DB connection failed`** — wrong `.env` credentials, MySQL not running,
-  or DB host isn't `localhost`. Test with `mysql -u DBUSER -p`.
-- **Port already in use / permission denied on PORT** — pick a port in your
-  assigned range; ports below 1024 usually need privileges you won't have.
-- **Build fails with a native binding error** — your `node_modules` came from a
-  different OS. Run `rm -rf node_modules && npm install` on that machine.
+| Problem | Fix |
+|---|---|
+| Blank page / 404 on assets | Check that `index.html` is in the root of your `lab10/` folder, not inside a `dist/` subfolder |
+| API returns 500 / DB error | Double-check `api/config.php` credentials. SSH in and run `mysql -u sXXXXXXX -p` to verify they work |
+| "Table doesn't exist" | You haven't run `travel.sql` yet — re-do Step 4 |
+| App loads but shows "Failed to load" | Open browser DevTools → Network tab, check the `/api/destinations.php` request. The URL should include your student ID in the path |
+| CORS error in DevTools | Not expected since API and frontend are on the same origin. If it appears, check `api/destinations.php` has the correct `Access-Control-Allow-Origin` header |
+| `mysql` command not found on Mercury | Try `mysql5` or ask IT support |
+
+---
+
+## Updating after changes
+
+1. Edit your files locally
+2. Rebuild: `npm run build`
+3. Re-upload changed files via FileZilla or SCP
+4. Hard-refresh your browser (`Ctrl+Shift+R` / `Cmd+Shift+R`)
+
+No server restart needed — Apache + PHP handles each request fresh.

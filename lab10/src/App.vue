@@ -207,7 +207,9 @@ interface Pagination {
   totalPages: number
 }
 
-const API = '/api'
+// Relative path works for both local dev (via Vite proxy) and Mercury deployment
+const API     = './api/destinations.php'
+const CAT_API = './api/categories.php'
 
 // ── State ──────────────────────────────────────────────────────────────────
 const destinations   = ref<Destination[]>([])
@@ -247,7 +249,7 @@ async function fetchDestinations () {
       search:   search.value,
       category: filterCategory.value
     })
-    const res  = await fetch(`${API}/destinations?${params}`)
+    const res  = await fetch(`${API}?${params}`)
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
     destinations.value    = json.data
@@ -263,7 +265,7 @@ async function fetchDestinations () {
 
 async function fetchCategories () {
   try {
-    const res  = await fetch(`${API}/categories`)
+    const res  = await fetch(CAT_API)
     const json = await res.json()
     categories.value = json
   } catch { /* non-critical */ }
@@ -315,7 +317,7 @@ async function submitForm () {
   submitting.value = true
   try {
     const isEdit = modal.mode === 'edit'
-    const url    = isEdit ? `${API}/destinations/${form.id}` : `${API}/destinations`
+    const url    = isEdit ? `${API}?id=${form.id}` : API
     const res    = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -347,7 +349,7 @@ async function deleteDestination () {
   if (!deleteModal.dest) return
   submitting.value = true
   try {
-    const res  = await fetch(`${API}/destinations/${deleteModal.dest.id}`, { method: 'DELETE' })
+    const res  = await fetch(`${API}?id=${deleteModal.dest.id}`, { method: 'DELETE' })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
     const name = deleteModal.dest.name

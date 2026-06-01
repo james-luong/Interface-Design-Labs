@@ -23,10 +23,10 @@ app.use(express.static(distDir))
 
 // ── MySQL connection pool ─────────────────────────────────────────────────
 const pool = mysql.createPool({
-  host:             process.env.DB_HOST     || 'localhost',
-  user:             process.env.DB_USER     || 'root',
-  password:         process.env.DB_PASSWORD || '',
-  database:         process.env.DB_NAME     || 'lab10_travel',
+  host:             process.env.DB_HOST     || 'feenix-mariadb.swin.edu.au',
+  user:             process.env.DB_USER     || 's104070337',
+  password:         process.env.DB_PASSWORD || '111004',
+  database:         process.env.DB_NAME     || 's104070337_db',
   port:             process.env.DB_PORT     || 3306,
   waitForConnections: true,
   connectionLimit:  10

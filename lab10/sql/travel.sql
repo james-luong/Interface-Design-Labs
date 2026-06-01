@@ -2,12 +2,13 @@
 -- Lab 10: Travel Destinations - MySQL Setup Script
 -- COS30043 Interface Design and Development
 -- ============================================================
--- Run this once on Mercury to create and populate the table.
--- Usage:  mysql -u YOUR_USERNAME -p YOUR_DATABASE < travel.sql
+-- LOCAL:   mysql -u root -p < sql/travel.sql
+-- MERCURY: mysql -u s104070337 -p's104070337_db' -h feenix-mariadb.swin.edu.au < sql/travel.sql
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS s104070337_db;
-USE s104070337_db;
+-- Local database (XAMPP). On Mercury the DB already exists, skip these two lines.
+CREATE DATABASE IF NOT EXISTS lab10_travel;
+USE lab10_travel;
 
 CREATE TABLE IF NOT EXISTS destinations (
     id          INT AUTO_INCREMENT PRIMARY KEY,

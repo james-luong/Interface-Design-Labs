@@ -1,0 +1,17 @@
+{
+  "name": "lab10-frontend",
+  "version": "1.0.0",
+  "description": "Vite + Vue 3 frontend for Lab 10 CRUD Application",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.0"
+  }
+}

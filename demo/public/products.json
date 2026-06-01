@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 17 Pro Max",
+    "category": "iPhone",
+    "price": 1899,
+    "description": "iPhone 17 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone17pro.jpeg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+
+  {
+    "id": 2,
+    "name": "iPhone 16 Pro Max",
+    "category": "iPhone",
+    "price": 1799,
+    "description": "iPhone 16 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone16pro.jpg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+
+  {
+    "id": 3,
+    "name": "iPhone 15 Pro Max",
+    "category": "iPhone",
+    "price": 1699,
+    "description": "iPhone 15 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone15pro.jpg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+
+  {
+    "id": 4,
+    "name": "iPhone 14 Pro Max",
+    "category": "iPhone",
+    "price": 1599,
+    "description": "iPhone 14 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone14pro.jpg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+
+  {
+    "id": 5,
+    "name": "iPhone 13 Pro Max",
+    "category": "iPhone",
+    "price": 1499,
+    "description": "iPhone 13 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone13pro.jpg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+
+  {
+    "id": 6,
+    "name": "iPhone 12 Pro Max",
+    "category": "iPhone",
+    "price": 1399,
+    "description": "iPhone 12 Pro Max with a stunning OLED display, powerful performance, and all-day battery life.",
+    "imageUrl": "/src/assets/img/iphone12pro.jpg",
+    "stock": 12,
+    "featured": true,
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  }
+
+]
